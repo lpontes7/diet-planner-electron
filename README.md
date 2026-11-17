@@ -40,28 +40,6 @@ Edite o nome do plano na barra superior. Nova dieta preserva o plano anterior; D
 
 O catálogo permite cadastrar, editar e excluir personalizados. Originais são somente leitura; Criar cópia abre um novo personalizado. Alimentos usados em qualquer dieta salva não podem ser excluídos. Editar um personalizado atualiza as dietas que o referenciam. Campos numéricos vazios significam desconhecido e geram aviso. Valores personalizados devem ser referentes a **100 g**.
 
-## Fidelidade à planilha
-
-As três planilhas fornecidas estão preservadas em `referencias/planilhas/` e foram lidas diretamente, sem executar macros. O inventário está em [referencias/especificacao_app.md](referencias/especificacao_app.md), com correspondência de células e VBA para módulos TypeScript e diferenças deliberadas. O catálogo tem uma única cópia em [src/data/alimentos.json](src/data/alimentos.json).
-
-- 620 alimentos com identificadores originais de 1 a 620. O seletor vazio de índice 0 foi excluído.
-- 563 células com fórmulas, valores em cache e vínculos compartilhados: [formulas.json](referencias/formulas.json).
-- 9 módulos VBA em `referencias/vba/`, apenas para consulta. PasswordBreaker, proteção e formatação de células não são migrados.
-- Comparação de versões, SHA-256, células, intervalos nomeados e controles: [metadados.json](referencias/metadados.json).
-- 59 registros exigem revisão: [alertas_dados.json](referencias/alertas_dados.json). Quatro têm energia não quantificada e quatro têm carboidratos ligeiramente negativos.
-
-`originalValues` preserva os valores exatos, inclusive `Tr`, `NA`, `*` e textos. Marcadores não quantificados viram `null` nos cálculos, com aviso. O texto numérico `91,5` foi convertido explicitamente e registrado. Negativos e valores fora de escala **não são corrigidos**. Registros com alertas exigem confirmação antes do uso. Um nutriente desconhecido torna desconhecido o respectivo total; os demais continuam sendo calculados. A apresentação usa `—` e explica seu significado. Não há arredondamento intermediário.
-
-Caso obrigatório verificado: feminino, 20 anos, 75 kg, 170 cm, sedentária, manutenção → TMB **1587**, meta **1904.4**, proteína **112.5**, gordura **65**, carboidrato **217.35**. As fórmulas históricas estão identificadas na interface e no relatório; não constituem recomendação clínica individual.
-
-Para repetir a extração, com Python 3 e `olefile`:
-
-```bash
-python3 scripts/extract_references.py
-```
-
-Python não é necessário para usar, compilar ou instalar o aplicativo. Os JSON e ícones estão incluídos. `scripts/create-icons.py` é uma ferramenta opcional que usa Pillow para reproduzir os ícones.
-
 ## Arquivos e recuperação
 
 Dados em `app.getPath('userData')`, normalmente `%APPDATA%\DietasApp\` no Windows:
