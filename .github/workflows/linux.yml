@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -50,7 +50,7 @@ jobs:
         run: npm run make -- --platform linux --arch x64
 
       - name: Disponibilizar pacote Linux
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: DietasApp-Linux-x64
           path: out/make/zip/linux/x64/*.zip
@@ -59,7 +59,7 @@ jobs:
           if-no-files-found: error
 
       - name: Disponibilizar evidências dos testes
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: evidencias-linux
