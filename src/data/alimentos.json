@@ -206,9 +206,7 @@
       "carbsPer100g": 3.3013043478260893
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "12",
@@ -455,9 +453,7 @@
       "carbsPer100g": 5.541333333333331
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "25",
@@ -495,9 +491,7 @@
       "carbsPer100g": 99.61
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "27",
@@ -535,9 +529,7 @@
       "carbsPer100g": 99.54
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "29",
@@ -765,9 +757,7 @@
       "carbsPer100g": 46.89266666666667
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "41",
@@ -786,9 +776,7 @@
       "carbsPer100g": 13.851594202898552
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "42",
@@ -1516,9 +1504,7 @@
       "carbsPer100g": 11.94375
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "80",
@@ -1537,9 +1523,7 @@
       "carbsPer100g": 14.688260869565212
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "81",
@@ -2166,9 +2150,7 @@
       "carbsPer100g": 11.434166666666664
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "114",
@@ -2764,9 +2746,7 @@
       "carbsPer100g": -0.006666666666674814
     },
     "needsReview": true,
-    "reviewReasons": [
-      "carbsPer100g: suspeito"
-    ]
+    "reviewReasons": ["carbsPer100g: suspeito"]
   },
   {
     "id": "145",
@@ -3982,9 +3962,7 @@
       "carbsPer100g": 3.3175
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "209",
@@ -4193,9 +4171,7 @@
       "carbsPer100g": 4.7934166666666655
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "220",
@@ -4352,9 +4328,7 @@
       "carbsPer100g": -0.02666666666666617
     },
     "needsReview": true,
-    "reviewReasons": [
-      "carbsPer100g: suspeito"
-    ]
+    "reviewReasons": ["carbsPer100g: suspeito"]
   },
   {
     "id": "228",
@@ -4810,10 +4784,7 @@
       "carbsPer100g": 100
     },
     "needsReview": true,
-    "reviewReasons": [
-      "proteinPer100g: ausente",
-      "fatPer100g: ausente"
-    ]
+    "reviewReasons": ["proteinPer100g: ausente", "fatPer100g: ausente"]
   },
   {
     "id": "252",
@@ -5877,9 +5848,7 @@
       "carbsPer100g": -0.023333333333338088
     },
     "needsReview": true,
-    "reviewReasons": [
-      "carbsPer100g: suspeito"
-    ]
+    "reviewReasons": ["carbsPer100g: suspeito"]
   },
   {
     "id": "308",
@@ -6183,9 +6152,7 @@
       "carbsPer100g": 89.22333333333333
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "324",
@@ -6836,9 +6803,7 @@
       "carbsPer100g": 8.697826086956518
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "358",
@@ -7256,9 +7221,7 @@
       "carbsPer100g": 5.246666666666659
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "380",
@@ -7467,9 +7430,7 @@
       "carbsPer100g": 15.15333333333334
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "391",
@@ -7602,10 +7563,7 @@
       "carbsPer100g": 96
     },
     "needsReview": true,
-    "reviewReasons": [
-      "proteinPer100g: ausente",
-      "fatPer100g: ausente"
-    ]
+    "reviewReasons": ["proteinPer100g: ausente", "fatPer100g: ausente"]
   },
   {
     "id": "398",
@@ -8023,9 +7981,7 @@
       "carbsPer100g": 0
     },
     "needsReview": true,
-    "reviewReasons": [
-      "proteinPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["proteinPer100g: não quantificado (Tr)"]
   },
   {
     "id": "420",
@@ -8044,9 +8000,7 @@
       "carbsPer100g": 0
     },
     "needsReview": true,
-    "reviewReasons": [
-      "proteinPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["proteinPer100g: não quantificado (Tr)"]
   },
   {
     "id": "421",
@@ -8065,9 +8019,7 @@
       "carbsPer100g": 0
     },
     "needsReview": true,
-    "reviewReasons": [
-      "proteinPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["proteinPer100g: não quantificado (Tr)"]
   },
   {
     "id": "422",
@@ -8086,9 +8038,7 @@
       "carbsPer100g": 0
     },
     "needsReview": true,
-    "reviewReasons": [
-      "proteinPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["proteinPer100g: não quantificado (Tr)"]
   },
   {
     "id": "423",
@@ -8221,9 +8171,7 @@
       "carbsPer100g": 8.139275362318838
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "430",
@@ -8242,9 +8190,7 @@
       "carbsPer100g": 7.525797101449274
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "431",
@@ -8358,9 +8304,7 @@
       "carbsPer100g": 87.14884391304349
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "437",
@@ -8531,9 +8475,7 @@
       "carbsPer100g": 11.52866666666666
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "446",
@@ -8722,9 +8664,7 @@
       "carbsPer100g": 0
     },
     "needsReview": true,
-    "reviewReasons": [
-      "Unidade descrita no nome: conferir base de 100 g"
-    ]
+    "reviewReasons": ["Unidade descrita no nome: conferir base de 100 g"]
   },
   {
     "id": "455",
@@ -9256,9 +9196,7 @@
       "carbsPer100g": 2.0371014492753527
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "483",
@@ -9505,9 +9443,7 @@
       "carbsPer100g": 9.321000000000003
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "496",
@@ -9526,9 +9462,7 @@
       "carbsPer100g": 16.880144927536232
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "497",
@@ -9775,9 +9709,7 @@
       "carbsPer100g": 86.77333333333331
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "510",
@@ -10556,9 +10488,7 @@
       "carbsPer100g": 15.105833333333337
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "551",
@@ -11119,9 +11049,7 @@
       "carbsPer100g": 8.8
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "580",
@@ -11235,9 +11163,7 @@
       "carbsPer100g": 6.894347826086952
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "586",
@@ -11256,9 +11182,7 @@
       "carbsPer100g": 5.117916666666662
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "587",
@@ -11391,9 +11315,7 @@
       "carbsPer100g": -0.04500000000000792
     },
     "needsReview": true,
-    "reviewReasons": [
-      "carbsPer100g: suspeito"
-    ]
+    "reviewReasons": ["carbsPer100g: suspeito"]
   },
   {
     "id": "594",
@@ -11431,9 +11353,7 @@
       "carbsPer100g": 9.395333333333332
     },
     "needsReview": true,
-    "reviewReasons": [
-      "fatPer100g: não quantificado (Tr)"
-    ]
+    "reviewReasons": ["fatPer100g: não quantificado (Tr)"]
   },
   {
     "id": "596",

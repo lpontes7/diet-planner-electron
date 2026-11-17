@@ -1,12 +1,12 @@
-import type { Diet, ReportSettings } from '../types/models';
+import type { Diet, ReportSettings } from "../types/models";
 
 export const DEFAULT_REPORT_SETTINGS: Readonly<ReportSettings> = Object.freeze({
-  title: '',
-  subtitle: 'Planejamento alimentar',
-  patientName: '',
-  professionalName: '',
-  contact: '',
-  accentColor: '#246447',
+  title: "",
+  subtitle: "Planejamento alimentar",
+  patientName: "",
+  professionalName: "",
+  contact: "",
+  accentColor: "#246447",
   showUpdatedAt: true,
 });
 

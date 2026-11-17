@@ -33,10 +33,10 @@ No Linux são necessárias bibliotecas GTK 3, NSS, GBM, xkbcommon, áudio e depe
 
 ## Uso
 
-1. **Perfil:** sexo usado na fórmula, idade, peso, altura e atividade. Aplicar perfil atualiza os cálculos.
+1. **Perfil:** nome da pessoa, sexo usado na fórmula, idade, peso, altura e atividade. Aplicar perfil salva o nome e atualiza os cálculos. O nome também aparece no relatório e PDF, sincronizado com a personalização do cabeçalho.
 2. **Estratégia:** hipertrofia (+500 kcal), manutenção ou definição (−500 kcal). Cálculo padrão, percentuais personalizados ou gramas. Percentuais somam 100%; no modo gramas, a meta é calculada pelos macros (4/9/4 kcal/g).
-3. **Dieta:** oito refeições com nome, horário e até seis alimentos cada. Busca por palavras, com ou sem acentos. Quantidades válidas atualizam imediatamente alimento, refeição e dia. A comparação destaca diferenças superiores a ±10%.
-4. **Relatório:** revisão, impressão nativa, PDF, exportar/importar JSON e abrir/excluir dietas. Inclui os oito blocos, inclusive vazios, e gráfico de pizza com a distribuição calórica da estratégia adotada.
+3. **Dieta:** cinco refeições iniciais (café da manhã, lanche da manhã, almoço, lanche da tarde e janta), com possibilidade de adicionar até 20. Cada refeição tem nome, horário e até seis alimentos. Arraste pelo ícone ⠿ para reordenar ou use os botões de seta, também acessíveis pelo teclado. Busca por palavras, com ou sem acentos. Quantidades válidas atualizam imediatamente alimento, refeição e dia. A comparação destaca diferenças superiores a ±10%.
+4. **Relatório:** revisão, impressão nativa, PDF, exportar/importar JSON e abrir/excluir dietas. Inclui todas as refeições existentes, inclusive vazias, na ordem escolhida, e gráfico de pizza com a distribuição calórica da estratégia adotada.
 
 No relatório, **Personalizar cabeçalho** permite editar título, subtítulo, nome da pessoa, profissional/contato, cor de destaque e exibição da data. As alterações aparecem imediatamente e são salvas por dieta, inclusive em cópias, importação/exportação JSON e PDF. Título vazio utiliza o nome do plano; dietas antigas abrem com os valores padrão.
 
@@ -60,7 +60,7 @@ alimentos-personalizados.json     # Catálogo separado dos originais
 
 Gravações serializadas usam temporário, sincronização, backup e renomeação. O catálogo é gravado antes das dietas. Se uma queda interromper a gravação entre arquivos, a abertura procura versões consistentes e avisa. Quando não consegue recuperar dados válidos, interrompe a abertura e preserva os arquivos. Exporte cópias para proteção adicional contra falhas de disco.
 
-Exportações incluem `schemaVersion: 1`, dieta e seus personalizados. Importação valida estrutura, medidas, estratégias, horários, limites e referências; cria nova dieta e remapeia IDs personalizados, preservando o catálogo existente. Limites: 500 dietas, 10.000 personalizados, JSON até 20 MB, oito refeições, seis alimentos por refeição, quantidade até 10.000 g.
+Exportações incluem `schemaVersion: 1`, dieta e seus personalizados. Importação valida estrutura, medidas, estratégias, horários, limites e referências; cria nova dieta e remapeia IDs personalizados, preservando o catálogo existente. Limites: 500 dietas, 10.000 personalizados, JSON até 20 MB, 20 refeições, seis alimentos por refeição, quantidade até 10.000 g.
 
 Em desenvolvimento, `DIETAS_DATA_DIR` isola os dados em outra pasta. O override é ignorado pelo aplicativo empacotado.
 
@@ -133,9 +133,9 @@ O ZIP fica disponível nos artefatos da execução como `DietasApp-Linux-x64`, p
 
 ## Verificações desta implementação
 
-- TypeScript, build e **40 testes Vitest** passaram, incluindo cálculos, gráfico, cabeçalho personalizado, compatibilidade de dietas antigas, persistência e regressões de empacotamento.
-- Teste real Electron: cálculos na interface, porções ao vivo, desconhecidos, catálogo personalizado, importação/exportação, PDF, confirmação, reabertura, oito refeições/48 itens e layout de 800 px.
-- PDF A4 gerado e texto extraído: **duas páginas**, incluindo a oitava refeição e seu alimento.
+- TypeScript, build e **45 testes Vitest** passaram, incluindo cálculos, gráfico, cabeçalho personalizado, compatibilidade de dietas antigas, persistência e regressões de empacotamento.
+- Teste real Electron: cálculos na interface, porções ao vivo, desconhecidos, catálogo personalizado, importação/exportação, PDF, confirmação, reabertura com a quantidade e a ordem preservadas, cinco refeições iniciais, adição até 20/120 itens, reordenação por arraste e teclado e layout de 800 px.
+- PDF A4 gerado com todas as refeições existentes, incluindo os blocos vazios.
 - Pacotes **Linux x64 e Windows x64** gerados pelo Forge. `app.asar` conferido: somente bundles e manifesto.
 - **Instalador Squirrel Windows x64 gerado com sucesso neste Linux**, usando Wine e Mono locais: `DietasApp Setup.exe`, pacote completo NuGet e `RELEASES`. O ZIP portátil também foi gerado pelo Forge. O instalador e a execução da aplicação ainda precisam de validação em um Windows real.
 - Integridade de distribuição conferida: SHA-1 e tamanho do `RELEASES`, CRC do NuGet, correspondência do `app.asar` e pacote embutido no `Setup.exe`. Checksums SHA-256 e resultados em `out/make/windows-build-validation.json`, junto das distribuições finais. Builds intermediários e evidências temporárias dos testes podem ser recriados pelos comandos acima.

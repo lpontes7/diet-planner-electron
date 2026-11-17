@@ -38,7 +38,6 @@
 .macro-pie { display: block; width: 100%; max-width: 210px; height: auto; margin: auto; overflow: visible; }
 .macro-pie path, .macro-pie circle[data-macro] { stroke: #fff; stroke-width: 1.4; }
 .pie-label { font: 700 15px 'Segoe UI', Arial, sans-serif; fill: #fff; paint-order: stroke; stroke: #0003; stroke-width: .45px; }
-.pie-label-carbs { fill: #253a16; stroke: #fff4; }
 .pie-label-small { font-size: 9px; }
 .pie-empty { font: 11px 'Segoe UI', Arial, sans-serif; fill: #7d8a73; }
 .adopted-calories { white-space: nowrap; margin: 0 0 16px; }

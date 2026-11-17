@@ -50,6 +50,19 @@ let app;
   assert.equal(preferences.contextIsolation, true); assert.equal(preferences.nodeIntegration, false); assert.equal(preferences.sandbox, true);
   assert.deepEqual(await page.evaluate(() => [typeof window.require, typeof window.process, typeof window.dietas.save]), ['undefined', 'undefined', 'function']);
   await expect(page.locator('.energy-estimate').first()).toContainText('1.587');
+  // The person's name is entered with the physical profile and shared with reports.
+  await expect(page.locator('#profile-form [name="patientName"]')).toHaveValue('');
+  await page.locator('#profile-form [name="patientName"]').fill('   ');
+  await page.getByRole('button', { name: 'Aplicar perfil' }).click();
+  await expect(page.locator('[data-form-error]')).toContainText('Informe o nome da pessoa');
+  await page.locator('#profile-form [name="patientName"]').fill('  Maria & João  ');
+  await page.getByRole('button', { name: 'Aplicar perfil' }).click();
+  await expect(page.locator('#profile-form [name="patientName"]')).toHaveValue('Maria & João');
+  await expect(page.locator('.energy-estimate').first()).toContainText('1.587');
+  await page.locator('[data-section="report"]').click();
+  await expect(page.locator('.report-profile')).toContainText('Maria & João');
+  await page.locator('[data-section="profile"]').click();
+  await expect(page.locator('#profile-form [name="patientName"]')).toHaveValue('Maria & João');
   await page.screenshot({ path: path.join(artifacts, 'perfil.png'), fullPage: true });
 
   await page.locator('[data-section="strategy"]').click();
@@ -60,7 +73,14 @@ let app;
   await page.locator('[name="mode"]').selectOption('standard');
   await page.getByRole('button', { name: 'Aplicar estratégia' }).click();
   await page.locator('[data-section="diet"]').click();
-  assert.equal(await page.locator('.meal-card').count(), 8);
+  await expect(page.locator('.meal-card')).toHaveCount(5);
+  const defaultMeals = ['Café da manhã', 'Lanche da manhã', 'Almoço', 'Lanche da tarde', 'Janta'];
+  assert.deepEqual(await page.locator('[data-name]').evaluateAll(inputs => inputs.map(input => input.value)), defaultMeals);
+  await expect(page.locator('.move-meal-up').first()).toBeDisabled();
+  await expect(page.locator('.move-meal-down').last()).toBeDisabled();
+  await page.locator('[data-section="report"]').click();
+  await expect(page.locator('.report-meal')).toHaveCount(5);
+  await page.locator('[data-section="diet"]').click();
   await page.locator('.add-food').first().click();
   await page.locator('#food-search').fill('banana prata crua');
   await expect(page.locator('#food-results')).toContainText('Banana, prata, crua');
@@ -72,6 +92,21 @@ let app;
   await page.locator('[data-quantity]').first().fill('0');
   await page.locator('.page-heading h1').click();
   await expect(page.locator('[data-quantity]').first()).toHaveValue('150');
+
+  // Native dragging and keyboard controls move the complete meal with its foods.
+  await page.locator('.meal-drag-handle').first().dragTo(page.locator('.meal-header').nth(1));
+  await expect(page.locator('[data-name]').nth(1)).toHaveValue('Café da manhã');
+  await expect(page.locator('.meal-card').nth(1).locator('[data-quantity]')).toHaveValue('150');
+  await expect(page.locator('.meal-card').nth(1).locator('[data-time]')).toHaveValue('07:00');
+  await page.locator('.meal-drag-handle').nth(1).dragTo(page.locator('.meal-header').first());
+  await expect(page.locator('[data-name]').first()).toHaveValue('Café da manhã');
+  await page.locator('.move-meal-down').first().press('Enter');
+  await expect(page.locator('[data-name]').nth(1)).toHaveValue('Café da manhã');
+  for (let i = 0; i < 15; i++) await page.locator('#add-meal').click();
+  await expect(page.locator('.meal-card')).toHaveCount(20);
+  await expect(page.locator('#add-meal')).toBeDisabled();
+  const mealOrder = [defaultMeals[1], defaultMeals[0], ...defaultMeals.slice(2), ...Array.from({ length: 15 }, (_, i) => `Refeição ${i + 6}`)];
+  assert.deepEqual(await page.locator('[data-name]').evaluateAll(inputs => inputs.map(input => input.value)), mealOrder);
 
   // Unknown nutrients stay unknown and require an explicit acknowledgement.
   await page.locator('.add-food').nth(1).click();
@@ -113,12 +148,16 @@ let app;
   await page.getByText('Salvo localmente', { exact: true }).waitFor();
   await page.screenshot({ path: path.join(artifacts, 'dieta.png'), fullPage: true });
   const saved = JSON.parse(await fs.readFile(path.join(storageDirectory, 'dietas.json'), 'utf-8'));
+  assert.deepEqual(saved.diets[0].meals.map(meal => meal.name), mealOrder);
+  assert.equal(saved.diets[0].meals[1].items[0].quantityG, 150);
   assert.equal(saved.diets[0].meals[7].items.length, 1);
   assert.equal(JSON.parse(await fs.readFile(path.join(storageDirectory, 'alimentos-personalizados.json'), 'utf-8'))[0].name, 'Iogurte editado');
 
   // Exercise the native PDF and JSON IPC paths; only the OS picker is replaced.
   await page.locator('[data-section="report"]').click();
-  assert.equal(await page.locator('.report-meal').count(), 8);
+  assert.equal(await page.locator('.report-meal').count(), 20);
+  await expect(page.locator('.report-meal').first()).toContainText('1. Lanche da manhã');
+  await expect(page.locator('.report-meal').nth(1)).toContainText('2. Café da manhã');
   await expect(page.locator('.report-meal').nth(7)).toContainText('Iogurte editado');
   await expect(page.locator('.macro-pie [data-macro]')).toHaveCount(3);
   assert.ok(Math.abs(Number(await page.locator('.macro-pie [data-macro="protein"]').getAttribute('data-percentage')) - 23.629489603024577) < 1e-10);
@@ -140,6 +179,13 @@ let app;
   await expect(page.locator('.report-profile')).toContainText('Ana Maria');
   await expect(page.locator('.report-identity')).toContainText('Nutricionista Silva');
   await expect(page.locator('.report-updated')).toHaveCount(0);
+  await expect(page.locator('.report-accent rect')).toHaveAttribute('fill', '#6d597a');
+  await page.locator('[data-section="profile"]').click();
+  await expect(page.locator('#profile-form [name="patientName"]')).toHaveValue('Ana Maria');
+  await page.getByRole('button', { name: 'Aplicar perfil' }).click();
+  await page.locator('[data-section="report"]').click();
+  await expect(page.locator('.report-heading h1')).toHaveText('Plano alimentar personalizado');
+  await expect(page.locator('.report-identity')).toContainText('Nutricionista Silva');
   await expect(page.locator('.report-accent rect')).toHaveAttribute('fill', '#6d597a');
 
   // The report follows goal, target and macro changes; meal totals are independent.
@@ -181,7 +227,7 @@ let app;
   await page.emulateMedia({ media: 'print' });
   await expect(page.locator('#report-header-controls')).toBeHidden();
   await expect(page.locator('.macro-pie')).toBeVisible();
-  assert.equal(await page.locator('.report-meal').count(), 8);
+  assert.equal(await page.locator('.report-meal').count(), 20);
   await page.emulateMedia({ media: 'screen' });
   const pdfPath = path.join(directory, 'relatorio.pdf');
   await app.evaluate(({ dialog }, target) => { dialog.showSaveDialog = async () => ({ canceled: false, filePath: target }); }, pdfPath);
@@ -209,7 +255,10 @@ let app;
   await expect(page.locator('.report-heading h1')).toHaveText('Plano alimentar personalizado');
   await expect(page.locator('.report-profile')).toContainText('Ana Maria');
   await expect(page.locator('.report-accent rect')).toHaveAttribute('fill', '#6d597a');
+  await page.locator('[data-section="profile"]').click();
+  await expect(page.locator('#profile-form [name="patientName"]')).toHaveValue('Ana Maria');
   await page.locator('[data-section="diet"]').click();
+  assert.deepEqual(await page.locator('[data-name]').evaluateAll(inputs => inputs.map(input => input.value)), mealOrder);
   await expect(page.locator('.meal-card').nth(7)).toContainText('Iogurte editado');
   await page.locator('#duplicate-diet').click();
   await expect(page.locator('#diet-name')).toHaveValue('Plano de aceitação (importada) (cópia)');
@@ -220,8 +269,8 @@ let app;
   await page.getByRole('button', { name: 'Limpar refeições', exact: true }).click();
   await expect(page.locator('[data-item]')).toHaveCount(0);
 
-  // Import a full 48-item plan, then check the sixth-item limit and eighth-meal total.
-  const full = structuredClone(exported); full.diet.id = uid(); full.diet.name = 'Plano completo 48 alimentos';
+  // Import a full 120-item plan and check both meal and food limits.
+  const full = structuredClone(exported); full.diet.id = uid(); full.diet.name = 'Plano completo 120 alimentos';
   full.diet.meals.forEach(meal => { meal.items = Array.from({ length: 6 }, () => ({ id: uid(), foodId: banana.id, quantityG: 100 })); });
   const fullPath = path.join(directory, 'completo.json'); await fs.writeFile(fullPath, JSON.stringify(full));
   await page.locator('[data-section="report"]').click();
@@ -229,15 +278,37 @@ let app;
   await page.locator('#import-diet').click();
   await expect(page.locator('#toast')).toContainText('Dieta importada');
   await page.locator('[data-section="diet"]').click();
-  assert.equal(await page.locator('[data-item]').count(), 48);
-  assert.equal(await page.locator('.add-food:disabled').count(), 8);
+  assert.equal(await page.locator('[data-item]').count(), 120);
+  assert.equal(await page.locator('.add-food:disabled').count(), 20);
+  await expect(page.locator('#add-meal')).toBeDisabled();
+  await page.locator('[data-section="report"]').click();
+  await expect(page.locator('.report-meal')).toHaveCount(20);
+  await page.locator('[data-section="diet"]').click();
   await page.setViewportSize({ width: 800, height: 900 });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
   await page.screenshot({ path: path.join(artifacts, 'dieta-800px.png'), fullPage: true });
+
+  // A shorter import stays at five meals, including after closing and reopening.
+  const short = structuredClone(exported); short.diet.meals = short.diet.meals.slice(0, 5);
+  const shortPath = path.join(directory, 'cinco-refeicoes.json'); await fs.writeFile(shortPath, JSON.stringify(short));
+  await page.locator('[data-section="report"]').click();
+  await app.evaluate(({ dialog }, target) => { dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [target] }); }, shortPath);
+  await page.locator('#import-diet').click();
+  await expect(page.locator('#toast')).toContainText('Dieta importada');
+  await expect(page.locator('.report-meal')).toHaveCount(5);
+  await page.locator('[data-section="diet"]').click();
+  await expect(page.locator('.meal-card')).toHaveCount(5);
+  await page.getByText('Salvo localmente', { exact: true }).waitFor();
+  await app.close(); page = await launch();
+  await expect(page.locator('.meal-card')).toHaveCount(5);
+  assert.deepEqual(await page.locator('[data-name]').evaluateAll(inputs => inputs.map(input => input.value)), mealOrder.slice(0, 5));
+  await expect(page.locator('.meal-card').nth(1).locator('[data-quantity]')).toHaveValue('150');
+  await expect(page.locator('#add-meal')).toBeEnabled();
+  await page.screenshot({ path: path.join(artifacts, 'cinco-refeicoes.png'), fullPage: true });
   await page.getByText('Salvo localmente', { exact: true }).waitFor();
   await app.close(); app = null;
   assert.deepEqual(errors, []);
-  console.log(`Dietas App ${expectedVersion} acceptance passed (${packagedArchive ? 'isolated app.asar without project node_modules' : 'development build'}): calculations, 620 foods, custom CRUD, unknown values, eight meals/48 items, live macro chart, report customization, JSON import/export, PDF/print styles, persistence, confirmation and responsive layout. Artifacts: ${artifacts}. Temporary data: ${directory}`);
+  console.log(`Dietas App ${expectedVersion} acceptance passed (${packagedArchive ? 'isolated app.asar without project node_modules' : 'development build'}): calculations, 620 foods, custom CRUD, unknown values, five default meals, adding up to twenty/120 items, native drag and keyboard reordering, live macro chart, report customization, JSON import/export, PDF/print styles, persistence, confirmation and responsive layout. Artifacts: ${artifacts}. Temporary data: ${directory}`);
 })().catch(async error => {
   console.error(error);
   if (app) { try { const page = await app.firstWindow(); await page.screenshot({ path: path.join(root, 'artifacts', 'failure.png') }); } catch {} try { await app.evaluate(({ app }) => app.exit(1)); } catch {} }
