@@ -19,7 +19,16 @@ export interface Strategy { goal: Goal; mode: StrategyMode; targetKcal: number; 
 export interface MacroValues { proteinG: number; carbsG: number; fatG: number }
 export interface MealItem { id: string; foodId: string; quantityG: number }
 export interface Meal { id: string; name: string; time: string; items: MealItem[] }
-export interface Diet { id: string; name: string; profile: Profile; strategy: Strategy; meals: Meal[]; updatedAt: string }
+export interface ReportSettings {
+  title: string;
+  subtitle: string;
+  patientName: string;
+  professionalName: string;
+  contact: string;
+  accentColor: string;
+  showUpdatedAt: boolean;
+}
+export interface Diet { id: string; name: string; profile: Profile; strategy: Strategy; meals: Meal[]; updatedAt: string; report?: ReportSettings }
 export interface Nutrients { kcal: number | null; protein: number | null; carbs: number | null; fat: number | null }
 export type Section = 'profile' | 'strategy' | 'diet' | 'report';
 export interface Workspace { schemaVersion: 1; diets: Diet[]; activeDietId: string; settings: { section: Section } }

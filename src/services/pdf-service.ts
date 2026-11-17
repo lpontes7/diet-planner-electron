@@ -5,6 +5,7 @@ import { reportHtml } from '../components/report';
 import { foodMap } from './food-service';
 import printCss from '../styles/print.css?inline';
 import { escapeHtml } from '../components/ui';
+import { reportTitle } from '../core/report';
 
 export async function produceReport(parent: BrowserWindow, file: DietFile, mode: 'pdf' | 'print'): Promise<boolean> {
   let destination: string | undefined;
@@ -16,7 +17,7 @@ export async function produceReport(parent: BrowserWindow, file: DietFile, mode:
   const printWindow = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true, javascript: false } });
   printWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   try {
-    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';"><title>${escapeHtml(file.diet.name)}</title><style>${printCss}</style></head><body>${reportHtml(file.diet, foodMap(file.customFoods))}</body></html>`;
+    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';"><title>${escapeHtml(reportTitle(file.diet))}</title><style>${printCss}</style></head><body>${reportHtml(file.diet, foodMap(file.customFoods))}</body></html>`;
     await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
     if (mode === 'pdf') {
       const pdf = await printWindow.webContents.printToPDF({ printBackground: true, pageSize: 'A4', preferCSSPageSize: true });

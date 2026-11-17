@@ -5,6 +5,7 @@ import path from 'node:path';
 import { addItem, createDiet } from '../src/core/meals';
 import { StorageService } from '../src/services/storage-service';
 import type { Bundle } from '../src/types/models';
+import { DEFAULT_REPORT_SETTINGS } from '../src/core/report';
 const folders: string[] = [];
 afterEach(async () => { for (const folder of folders.splice(0)) await rm(folder, { recursive: true, force: true }); });
 async function setup(): Promise<{ folder: string; storage: StorageService; bundle: Bundle }> {
@@ -19,6 +20,12 @@ it('persiste e reabre o JSON e suas configurações', async () => {
   const reopened = await new StorageService(folder, new Set(['1'])).load();
   expect(reopened.workspace).toEqual(bundle.workspace); expect(reopened.customFoods).toEqual([]);
   expect(await readdir(folder)).toContain('alimentos-personalizados.json');
+});
+it('preserva o cabeçalho personalizado ao fechar e reabrir os dados', async () => {
+  const { storage, bundle } = await setup();
+  bundle.workspace.diets[0]!.report = { ...DEFAULT_REPORT_SETTINGS, title: 'Plano personalizado', professionalName: 'Clínica Silva', patientName: 'Ana', showUpdatedAt: false };
+  await storage.save(bundle);
+  expect((await storage.load()).workspace.diets[0]!.report).toEqual(bundle.workspace.diets[0]!.report);
 });
 it('recupera backup e preserva o arquivo corrompido', async () => {
   const { folder, storage, bundle } = await setup();

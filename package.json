@@ -1,7 +1,7 @@
 {
   "name": "dietas-app",
   "productName": "DietasApp",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "description": "Planejamento alimentar offline com fidelidade à planilha original",
   "author": "Lucas Pontes",

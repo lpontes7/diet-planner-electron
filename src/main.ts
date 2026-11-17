@@ -9,6 +9,7 @@ import { renderStrategy } from './components/strategy';
 import { renderDiet } from './components/diet';
 import { openCatalog } from './components/food-catalog';
 import { reportHtml } from './components/report';
+import { renderReportHeaderEditor } from './components/report-header-editor';
 import { compact, confirmAction, escapeHtml as e, showModal, toast } from './components/ui';
 
 let bundle: Bundle;
@@ -103,7 +104,7 @@ function render(): void {
   name.addEventListener('input', () => {
     if (name.value.trim()) {
       diet.name = name.value.trim(); changed();
-      const title = content.querySelector('.report-heading h1'); if (title) title.textContent = diet.name;
+      const title = content.querySelector('.report-heading h1'); if (title && !diet.report?.title) title.textContent = diet.name;
       const savedTitle = content.querySelector('.saved-diet.current h3'); if (savedTitle) savedTitle.textContent = diet.name;
     }
   });
@@ -133,7 +134,12 @@ function render(): void {
   if (section === 'report') renderReports(content);
 }
 function renderReports(root: HTMLElement): void {
-  root.innerHTML = `<div class="report-actions no-print"><div><h2>Seu planejamento completo</h2><p>Perfil, metas e as oito refeições em um só documento.</p></div><div><button id="action-exportDiet" class="button secondary">Exportar JSON</button><button id="action-print" class="button secondary">Imprimir</button><button id="action-pdf" class="button primary">↓ Salvar PDF</button></div></div><div class="report-preview">${reportHtml(activeDiet(), foodMap(bundle.customFoods))}</div><div class="saved-section no-print"><div class="section-heading"><div><span class="eyebrow">SUA ORGANIZAÇÃO</span><h2>Dietas salvas <small>${bundle.workspace.diets.length}</small></h2></div><button id="import-diet" class="button secondary">↑ Importar JSON</button></div><div class="saved-diets">${bundle.workspace.diets.map(diet => `<article class="saved-diet ${diet.id === activeDiet().id ? 'current' : ''}"><span class="saved-icon" aria-hidden="true">▧</span><div><h3>${e(diet.name)}</h3><p>${compact(diet.strategy.targetKcal)} kcal · ${diet.meals.reduce((n, m) => n + m.items.length, 0)} alimentos</p><small>${e(new Date(diet.updatedAt).toLocaleString('pt-BR'))}</small></div><div class="saved-actions">${diet.id === activeDiet().id ? '<span class="current-chip">Em edição</span>' : `<button class="text-button" data-open="${e(diet.id)}">Abrir dieta</button>`}<button class="text-button danger-text" data-delete-diet="${e(diet.id)}">Excluir</button></div></article>`).join('')}</div><p class="storage-path">Armazenamento local: ${e(dataPath)}</p></div>`;
+  root.innerHTML = `<div class="report-actions no-print"><div><h2>Seu planejamento completo</h2><p>Perfil, metas e as oito refeições em um só documento.</p></div><div><button id="action-exportDiet" class="button secondary">Exportar JSON</button><button id="action-print" class="button secondary">Imprimir</button><button id="action-pdf" class="button primary">↓ Salvar PDF</button></div></div><div id="report-header-controls" class="no-print"></div><div class="report-preview">${reportHtml(activeDiet(), foodMap(bundle.customFoods))}</div><div class="saved-section no-print"><div class="section-heading"><div><span class="eyebrow">SUA ORGANIZAÇÃO</span><h2>Dietas salvas <small>${bundle.workspace.diets.length}</small></h2></div><button id="import-diet" class="button secondary">↑ Importar JSON</button></div><div class="saved-diets">${bundle.workspace.diets.map(diet => `<article class="saved-diet ${diet.id === activeDiet().id ? 'current' : ''}"><span class="saved-icon" aria-hidden="true">▧</span><div><h3>${e(diet.name)}</h3><p>${compact(diet.strategy.targetKcal)} kcal · ${diet.meals.reduce((n, m) => n + m.items.length, 0)} alimentos</p><small>${e(new Date(diet.updatedAt).toLocaleString('pt-BR'))}</small></div><div class="saved-actions">${diet.id === activeDiet().id ? '<span class="current-chip">Em edição</span>' : `<button class="text-button" data-open="${e(diet.id)}">Abrir dieta</button>`}<button class="text-button danger-text" data-delete-diet="${e(diet.id)}">Excluir</button></div></article>`).join('')}</div><p class="storage-path">Armazenamento local: ${e(dataPath)}</p></div>`;
+  const diet = activeDiet();
+  renderReportHeaderEditor(root.querySelector('#report-header-controls')!, diet, settings => {
+    diet.report = settings; changed();
+    root.querySelector('.report-preview')!.innerHTML = reportHtml(diet, foodMap(bundle.customFoods));
+  });
   (['pdf', 'print', 'exportDiet'] as const).forEach(mode => root.querySelector(`#action-${mode}`)!.addEventListener('click', () => { void exportFile(mode); }));
   root.querySelector('#import-diet')!.addEventListener('click', () => { void importFile(); });
   root.querySelectorAll<HTMLElement>('[data-open]').forEach(button => button.addEventListener('click', () => { bundle.workspace.activeDietId = button.dataset.open!; navigate('diet'); toast('Dieta aberta.'); }));

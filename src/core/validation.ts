@@ -1,4 +1,4 @@
-import type { Bundle, Diet, DietFile, Food, Workspace } from '../types/models';
+import type { Bundle, Diet, DietFile, Food, ReportSettings, Workspace } from '../types/models';
 import { basalMetabolism, macroEnergy, calculateStrategy } from './strategy';
 
 function object(value: unknown, label: string): Record<string, unknown> {
@@ -10,6 +10,23 @@ function text(value: unknown, label: string, max = 120): asserts value is string
 }
 function id(value: unknown): asserts value is string { if (typeof value !== 'string' || !/^[\w-]{1,100}$/.test(value)) throw new Error('Identificador inválido.'); }
 function unique(ids: string[]): void { if (new Set(ids).size !== ids.length) throw new Error('Identificadores duplicados no arquivo.'); }
+export function validateReportSettings(value: unknown): ReportSettings {
+  const report = object(value, 'Cabeçalho do relatório');
+  const fields = { title: 120, subtitle: 180, patientName: 120, professionalName: 120, contact: 180 } as const;
+  for (const [key, max] of Object.entries(fields)) {
+    const content = report[key];
+    if (typeof content !== 'string' || content.length > max || /[\u0000-\u001f]/.test(content)) {
+      throw new Error(`Cabeçalho: ${key} deve ter até ${max} caracteres, sem quebras de linha.`);
+    }
+  }
+  if (typeof report.accentColor !== 'string' || !/^#[0-9a-f]{6}$/i.test(report.accentColor)) throw new Error('Selecione uma cor válida para o cabeçalho.');
+  if (typeof report.showUpdatedAt !== 'boolean') throw new Error('A opção de exibir a data deve ser verdadeira ou falsa.');
+  return {
+    title: (report.title as string).trim(), subtitle: (report.subtitle as string).trim(),
+    patientName: (report.patientName as string).trim(), professionalName: (report.professionalName as string).trim(),
+    contact: (report.contact as string).trim(), accentColor: report.accentColor, showUpdatedAt: report.showUpdatedAt,
+  };
+}
 export function validateDiet(value: unknown): Diet {
   const o = object(value, 'Dieta');
   id(o.id); text(o.name, 'Nome da dieta');
@@ -36,7 +53,9 @@ export function validateDiet(value: unknown): Diet {
   unique(ids);
   if (typeof o.updatedAt !== 'string' || !Number.isFinite(Date.parse(o.updatedAt))) throw new Error('Data da dieta inválida.');
   // Reconstruct validated shapes, excluding unrecognized properties from imported JSON.
-  return { id: o.id, name: o.name, profile: { sex: profile.sex, age: profile.age, weightKg: profile.weightKg, heightCm: profile.heightCm, activityFactor: profile.activityFactor }, strategy: { goal: s.goal, mode: s.mode, targetKcal: s.targetKcal, proteinG: s.proteinG, fatG: s.fatG, carbsG: s.carbsG }, meals: (o.meals as Diet['meals']).map(m => ({ id: m.id, name: m.name, time: m.time, items: m.items.map(i => ({ id: i.id, foodId: i.foodId, quantityG: i.quantityG })) })), updatedAt: o.updatedAt };
+  return { id: o.id, name: o.name, profile: { sex: profile.sex, age: profile.age, weightKg: profile.weightKg, heightCm: profile.heightCm, activityFactor: profile.activityFactor }, strategy: { goal: s.goal, mode: s.mode, targetKcal: s.targetKcal, proteinG: s.proteinG, fatG: s.fatG, carbsG: s.carbsG }, meals: (o.meals as Diet['meals']).map(m => ({ id: m.id, name: m.name, time: m.time, items: m.items.map(i => ({ id: i.id, foodId: i.foodId, quantityG: i.quantityG })) })), updatedAt: o.updatedAt,
+    ...(o.report !== undefined ? { report: validateReportSettings(o.report) } : {}),
+  };
 }
 export function validateCustomFood(value: unknown): Food {
   const f = object(value, 'Alimento');

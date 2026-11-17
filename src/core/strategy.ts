@@ -34,7 +34,21 @@ export function targetEnergy(p: Profile, goal: Goal): number {
 function assertEnergy(n: number): void {
   if (!Number.isFinite(n) || n <= 0 || n > 20000) throw new Error('A meta calórica deve ser maior que zero e até 20.000 kcal.');
 }
-export function macroEnergy(m: MacroValues): number { return m.proteinG * 4 + m.fatG * 9 + m.carbsG * 4; }
+export interface MacroContributions { protein: number; fat: number; carbs: number }
+export function macroCalories(m: MacroValues): MacroContributions {
+  return { protein: m.proteinG * 4, fat: m.fatG * 9, carbs: m.carbsG * 4 };
+}
+export function macroEnergy(m: MacroValues): number {
+  const calories = macroCalories(m);
+  return calories.protein + calories.fat + calories.carbs;
+}
+export function macroPercentages(s: Pick<Strategy, 'targetKcal' | 'proteinG' | 'fatG' | 'carbsG'>): MacroContributions {
+  const calories = macroCalories(s);
+  if (!Number.isFinite(s.targetKcal) || s.targetKcal <= 0 || Object.values(calories).some(n => !Number.isFinite(n) || n < 0)) {
+    return { protein: 0, fat: 0, carbs: 0 };
+  }
+  return { protein: calories.protein / s.targetKcal * 100, fat: calories.fat / s.targetKcal * 100, carbs: calories.carbs / s.targetKcal * 100 };
+}
 function assertMacros(m: MacroValues): void {
   if ([m.proteinG, m.carbsG, m.fatG].some(n => !Number.isFinite(n) || n < 0 || n > 5000)) {
     throw new Error('Os macronutrientes devem ter valores finitos e não negativos, até 5.000 g.');

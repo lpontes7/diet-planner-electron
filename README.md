@@ -36,7 +36,11 @@ No Linux são necessárias bibliotecas GTK 3, NSS, GBM, xkbcommon, áudio e depe
 1. **Perfil:** sexo usado na fórmula, idade, peso, altura e atividade. Aplicar perfil atualiza os cálculos.
 2. **Estratégia:** hipertrofia (+500 kcal), manutenção ou definição (−500 kcal). Cálculo padrão, percentuais personalizados ou gramas. Percentuais somam 100%; no modo gramas, a meta é calculada pelos macros (4/9/4 kcal/g).
 3. **Dieta:** oito refeições com nome, horário e até seis alimentos cada. Busca por palavras, com ou sem acentos. Quantidades válidas atualizam imediatamente alimento, refeição e dia. A comparação destaca diferenças superiores a ±10%.
-4. **Relatório:** revisão, impressão nativa, PDF, exportar/importar JSON e abrir/excluir dietas. Inclui os oito blocos, inclusive vazios.
+4. **Relatório:** revisão, impressão nativa, PDF, exportar/importar JSON e abrir/excluir dietas. Inclui os oito blocos, inclusive vazios, e gráfico de pizza com a distribuição calórica da estratégia adotada.
+
+No relatório, **Personalizar cabeçalho** permite editar título, subtítulo, nome da pessoa, profissional/contato, cor de destaque e exibição da data. As alterações aparecem imediatamente e são salvas por dieta, inclusive em cópias, importação/exportação JSON e PDF. Título vazio utiliza o nome do plano; dietas antigas abrem com os valores padrão.
+
+O gráfico usa SVG nativo, sem dependências externas, com proteínas em azul (`#4F81BD`), gorduras em vermelho (`#C0504D`) e carboidratos em verde (`#9BBB59`). Os percentuais são calculados pela contribuição calórica dos macros da estratégia (4/9/4 kcal por grama), independentemente dos alimentos adicionados. Legenda, gramas e calorias ficam à direita; dados pessoais ficam à esquerda. As cores e os percentuais são preservados na impressão e no PDF. O relatório não inclui mais a marca “DA”, o rótulo de estratégia da planilha nem o antigo rodapé.
 
 Edite o nome do plano na barra superior. Nova dieta preserva o plano anterior; Duplicar cria uma cópia independente. Limpar remove alimentos, mantendo perfil, estratégia e horários, com confirmação. Alterações válidas são salvas automaticamente; há também Salvar dieta e indicador de estado. Perfil/estratégia só são aplicados pelos respectivos botões. Gravações pendentes são avisadas ao fechar.
 
@@ -129,7 +133,7 @@ O ZIP fica disponível nos artefatos da execução como `DietasApp-Linux-x64`, p
 
 ## Verificações desta implementação
 
-- TypeScript, build e **28 testes Vitest** passaram, incluindo regressões de dependências do pacote, eventos Squirrel e leitura de ASAR com regras de caminhos do Windows.
+- TypeScript, build e **40 testes Vitest** passaram, incluindo cálculos, gráfico, cabeçalho personalizado, compatibilidade de dietas antigas, persistência e regressões de empacotamento.
 - Teste real Electron: cálculos na interface, porções ao vivo, desconhecidos, catálogo personalizado, importação/exportação, PDF, confirmação, reabertura, oito refeições/48 itens e layout de 800 px.
 - PDF A4 gerado e texto extraído: **duas páginas**, incluindo a oitava refeição e seu alimento.
 - Pacotes **Linux x64 e Windows x64** gerados pelo Forge. `app.asar` conferido: somente bundles e manifesto.
