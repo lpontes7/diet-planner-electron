@@ -20,8 +20,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
-      - run: npm run test:e2e
       - run: npm run make:windows
+      - name: Testar o app.asar fora do repositório
+        env:
+          DIETAS_E2E_APP: out/DietasApp-win32-x64/resources/app.asar
+        run: npm run test:e2e
       - uses: actions/upload-artifact@v7
         with:
           name: DietasApp-Windows-x64

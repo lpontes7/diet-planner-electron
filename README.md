@@ -27,6 +27,8 @@ npm run make:windows:linux # Squirrel e ZIP no Linux com Wine e Mono
 
 Execute `npm run build` antes de `npm run test:e2e`. O teste usa Playwright com o próprio Electron; não requer navegador separado. Salva screenshots e um PDF de amostra em `artifacts/`, usando dados temporários. Precisa de sessão gráfica ou Xvfb. O Playwright desativa o sandbox de processo na sessão automatizada; o teste verifica as configurações `contextIsolation`, `nodeIntegration` e `sandbox` da janela. A aplicação distribuída não desativa o sandbox.
 
+Para testar uma distribuição, defina `DIETAS_E2E_APP` com o caminho de `resources/app.asar` antes de executar `npm run test:e2e`. O teste copia o arquivo para uma pasta temporária fora do repositório e abre essa cópia, sem acesso às dependências em `node_modules` do projeto. Os workflows Windows e Linux fazem essa verificação após gerar o pacote.
+
 No Linux são necessárias bibliotecas GTK 3, NSS, GBM, xkbcommon, áudio e dependências. No WSL é necessário WSLg ou servidor X. Essas bibliotecas não são necessárias no Windows. Vite serve arquivos **somente no desenvolvimento**; o executável distribuído carrega arquivos locais via `file://`.
 
 ## Uso
@@ -63,6 +65,12 @@ Em desenvolvimento, `DIETAS_DATA_DIR` isola os dados em outra pasta. O override 
 `src/electron/`: janela, preload e IPC. O renderer não acessa `fs`, Node.js ou `ipcRenderer`; o preload expõe seis operações específicas. O processo principal valida payloads e frame de origem; caminhos de importação/exportação/PDF são escolhidos por diálogos nativos. Navegação, novas janelas, permissões e rede externa são bloqueadas. Texto inserido é escapado antes de compor HTML. A janela de impressão é isolada e não executa JavaScript.
 
 `src/core/`: estratégia, refeições, nutrição e validação. `src/components/`: interface. `src/services/`: catálogo, arquivos e PDF. O catálogo original é embarcado. O Forge inclui somente bundles e recursos, sem planilhas, referências ou VBA.
+
+As dependências JavaScript de runtime, incluindo `electron-squirrel-startup`, `debug` e `ms`, são incorporadas ao bundle do processo principal. Apenas Electron e módulos nativos do Node são externos. `electron-squirrel-startup` permanece declarado em `dependencies`. O hook `postPackage` do Forge executa `scripts/verify-package.mts` contra o `app.asar` gerado e interrompe a distribuição se houver dependência externa ausente, falha de inicialização ou erro nos quatro eventos Squirrel. A verificação usa Electron e efeitos de sistema simulados; a interface real é testada separadamente com o ASAR isolado.
+
+### Correção da versão 1.0.1
+
+A versão 1.0.0 marcava `electron-squirrel-startup` como externo no Vite, mas não incluía `node_modules` na distribuição. Isso causava `Cannot find module 'electron-squirrel-startup'` ao iniciar a aplicação instalada. A versão 1.0.1 incorpora a dependência e suas transitivas ao `main.cjs`, e adiciona testes de regressão do pacote. Instale o novo `DietasApp Setup.exe` para substituir a versão com falha. Os arquivos de dietas em `%APPDATA%\DietasApp` são mantidos pelo aplicativo.
 
 ## Distribuição Windows
 
@@ -115,13 +123,13 @@ O workflow [.github/workflows/windows.yml](.github/workflows/windows.yml) verifi
 
 ## Workflow Linux
 
-O workflow [.github/workflows/linux.yml](.github/workflows/linux.yml) executa em Ubuntu 24.04 x64, em pushes para `main`/`master`, pull requests e execução manual pela aba Actions. Instala as bibliotecas do Electron, executa `npm ci` e `npm run check`, testa a interface em uma sessão gráfica virtual Xvfb e gera a distribuição Linux com Electron Forge. O sandbox é desabilitado apenas na sessão de testes automatizados.
+O workflow [.github/workflows/linux.yml](.github/workflows/linux.yml) executa em Ubuntu 24.04 x64, em pushes para `main`/`master`, pull requests e execução manual pela aba Actions. Instala as bibliotecas do Electron, executa `npm ci` e `npm run check`, gera a distribuição Linux com Electron Forge e testa seu `app.asar` isolado em uma sessão gráfica virtual Xvfb. O sandbox é desabilitado apenas na sessão de testes automatizados.
 
 O ZIP fica disponível nos artefatos da execução como `DietasApp-Linux-x64`, por 14 dias. Screenshots e o PDF dos testes ficam em `evidencias-linux`, inclusive quando uma etapa falha e há evidências disponíveis. Após extrair o ZIP, execute `./DietasApp` dentro da pasta completa do aplicativo. A distribuição usa o maker ZIP já configurado; não requer Wine nem Mono. Nenhuma execução remota é disparada ao criar o arquivo do workflow.
 
 ## Verificações desta implementação
 
-- TypeScript, build e **23 testes Vitest** passaram.
+- TypeScript, build e **27 testes Vitest** passaram, incluindo regressões de dependências do pacote e eventos Squirrel.
 - Teste real Electron: cálculos na interface, porções ao vivo, desconhecidos, catálogo personalizado, importação/exportação, PDF, confirmação, reabertura, oito refeições/48 itens e layout de 800 px.
 - PDF A4 gerado e texto extraído: **duas páginas**, incluindo a oitava refeição e seu alimento.
 - Pacotes **Linux x64 e Windows x64** gerados pelo Forge. `app.asar` conferido: somente bundles e manifesto.

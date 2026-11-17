@@ -38,16 +38,17 @@ jobs:
       - name: Verificar TypeScript, testes e build
         run: npm run check
 
-      - name: Testar a interface no Electron com Xvfb
+      - name: Gerar pacote Linux x64
+        run: npm run make -- --platform linux --arch x64
+
+      - name: Testar o app.asar isolado no Electron com Xvfb
         env:
           DIETAS_E2E_NO_SANDBOX: '1'
+          DIETAS_E2E_APP: out/DietasApp-linux-x64/resources/app.asar
         run: >-
           dbus-run-session --
           xvfb-run --auto-servernum --server-args="-screen 0 1360x1024x24"
           npm run test:e2e
-
-      - name: Gerar pacote Linux x64
-        run: npm run make -- --platform linux --arch x64
 
       - name: Disponibilizar pacote Linux
         uses: actions/upload-artifact@v7

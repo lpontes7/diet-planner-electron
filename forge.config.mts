@@ -4,6 +4,8 @@ import { MakerZIP } from '@electron-forge/maker-zip';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseVersion, FuseV1Options } from '@electron/fuses';
+import path from 'node:path';
+import { verifyPackagedApp } from './scripts/verify-package.mts';
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -13,6 +15,15 @@ const config: ForgeConfig = {
     extraResource: ['assets/icon.png'],
   },
   rebuildConfig: {},
+  hooks: {
+    postPackage: async (_config, { outputPaths }) => {
+      for (const directory of outputPaths) {
+        const archive = path.join(directory, 'resources', 'app.asar');
+        const result = verifyPackagedApp(archive);
+        console.log(`Pacote ${result.version} verificado: abertura isolada e quatro eventos Squirrel, sem node_modules do projeto.`);
+      }
+    },
+  },
   makers: [
     new MakerSquirrel({ name: 'DietasApp', setupExe: 'DietasApp Setup.exe', setupIcon: 'assets/icon.ico', noMsi: true }),
     new MakerZIP({}, ['linux', 'win32']),
