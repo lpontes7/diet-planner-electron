@@ -15,6 +15,28 @@ const uid = () => crypto.randomUUID();
 const errors = [];
 let app;
 
+// HTML dragover needs a second move in some browsers/runners:
+// https://playwright.dev/docs/input#drag-and-drop
+async function dragMeal(page, sourceCard, targetCard) {
+  const handle = sourceCard.locator('.meal-drag-handle');
+  const target = targetCard.locator('.meal-header');
+  await handle.hover();
+  const sourceBox = await handle.boundingBox();
+  assert.ok(sourceBox, 'A alça de arraste deve estar visível');
+  await page.mouse.down();
+  try {
+    // Start the gesture while still over the handle, before scrolling to a target.
+    await page.mouse.move(sourceBox.x + sourceBox.width / 2, sourceBox.y + 2, { steps: 8 });
+    await expect(sourceCard).toHaveClass(/meal-dragging/);
+    // Drop on header padding, away from the editable name/time fields.
+    await target.hover({ position: { x: 8, y: 8 } });
+    await target.hover({ position: { x: 10, y: 10 } });
+    await expect(targetCard).toHaveClass(/meal-drop-(before|after)/);
+  } finally {
+    await page.mouse.up();
+  }
+}
+
 (async () => {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'dietas-e2e-'));
   if (packagedArchive) {
@@ -94,14 +116,20 @@ let app;
   await expect(page.locator('[data-quantity]').first()).toHaveValue('150');
 
   // Native dragging and keyboard controls move the complete meal with its foods.
-  await page.locator('.meal-drag-handle').first().dragTo(page.locator('.meal-header').nth(1));
-  await expect(page.locator('[data-name]').nth(1)).toHaveValue('Café da manhã');
-  await expect(page.locator('.meal-card').nth(1).locator('[data-quantity]')).toHaveValue('150');
-  await expect(page.locator('.meal-card').nth(1).locator('[data-time]')).toHaveValue('07:00');
-  await page.locator('.meal-drag-handle').nth(1).dragTo(page.locator('.meal-header').first());
-  await expect(page.locator('[data-name]').first()).toHaveValue('Café da manhã');
+  // Exercise the smaller viewport seen on the Windows runner as well.
+  const originalViewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+  await page.setViewportSize({ width: 1000, height: 680 });
+  for (let gesture = 0; gesture < 3; gesture++) {
+    await dragMeal(page, page.locator('.meal-card').first(), page.locator('.meal-card').nth(1));
+    await expect(page.locator('[data-name]').nth(1)).toHaveValue('Café da manhã');
+    await expect(page.locator('.meal-card').nth(1).locator('[data-quantity]')).toHaveValue('150');
+    await expect(page.locator('.meal-card').nth(1).locator('[data-time]')).toHaveValue('07:00');
+    await dragMeal(page, page.locator('.meal-card').nth(1), page.locator('.meal-card').first());
+    await expect(page.locator('[data-name]').first()).toHaveValue('Café da manhã');
+  }
   await page.locator('.move-meal-down').first().press('Enter');
   await expect(page.locator('[data-name]').nth(1)).toHaveValue('Café da manhã');
+  await page.setViewportSize(originalViewport);
   for (let i = 0; i < 15; i++) await page.locator('#add-meal').click();
   await expect(page.locator('.meal-card')).toHaveCount(20);
   await expect(page.locator('#add-meal')).toBeDisabled();
