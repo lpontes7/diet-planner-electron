@@ -1,0 +1,37 @@
+name: Verificar e gerar aplicativo Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test:e2e
+      - run: npm run make:windows
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DietasApp-Windows-x64
+          path: |
+            out/make/squirrel.windows/x64/*
+            out/make/zip/win32/x64/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencias-windows
+          path: artifacts/
+          if-no-files-found: ignore

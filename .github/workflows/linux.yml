@@ -1,0 +1,68 @@
+name: Verificar e gerar aplicativo Linux
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências do Electron e da sessão gráfica virtual
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            dbus-x11 fonts-liberation libasound2t64 libgbm1 libgtk-3-0t64 \
+            libnss3 libxkbcommon0 libxss1 xauth xvfb zip
+
+      - name: Instalar dependências do projeto
+        run: npm ci
+
+      - name: Verificar TypeScript, testes e build
+        run: npm run check
+
+      - name: Testar a interface no Electron com Xvfb
+        env:
+          DIETAS_E2E_NO_SANDBOX: '1'
+        run: >-
+          dbus-run-session --
+          xvfb-run --auto-servernum --server-args="-screen 0 1360x1024x24"
+          npm run test:e2e
+
+      - name: Gerar pacote Linux x64
+        run: npm run make -- --platform linux --arch x64
+
+      - name: Disponibilizar pacote Linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: DietasApp-Linux-x64
+          path: out/make/zip/linux/x64/*.zip
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Disponibilizar evidências dos testes
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencias-linux
+          path: artifacts/
+          retention-days: 14
+          if-no-files-found: ignore

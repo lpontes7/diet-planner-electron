@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+    <title>Dietas App</title>
+  </head>
+  <body>
+    <header class="app-header no-print"><div class="header-inner"><a class="brand" href="#" aria-label="Dietas App, início"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="currentColor"/><path d="M11 26c-1-11 6-17 19-16 0 13-7 20-17 17m1-1 12-12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span>dietas<span class="brand-light">app</span><small>SEU PLANO. SEU RITMO.</small></span></a><nav class="main-nav" aria-label="Etapas do planejamento"><button data-section="profile"><span>01</span> Perfil</button><button data-section="strategy"><span>02</span> Estratégia</button><button data-section="diet"><span>03</span> Dieta</button><button data-section="report"><span>04</span> Relatório</button></nav><div class="header-status"><span class="status-dot"></span><span id="save-status" role="status">Carregando…</span></div></div></header>
+    <main id="app" class="app-shell"><div class="loading-state">Abrindo seu planejamento…</div></main>
+    <footer class="app-footer no-print"><span>Dietas App <span class="footer-dot">·</span> Seu planejamento, sempre com você.</span><span>100% local <span class="footer-dot">·</span> Sem conexão necessária</span></footer>
+    <dialog id="modal" aria-label="Diálogo do aplicativo"></dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
