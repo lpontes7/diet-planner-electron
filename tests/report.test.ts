@@ -50,6 +50,9 @@ it("mostra a estratégia no gráfico mesmo quando os alimentos planejados mudam"
   expect(changed).toContain('data-macro="protein" data-percentage="50"');
   expect(changed).toContain("DIETA ADOTADA");
   expect(changed).toContain("2.400");
+  expect(changed).toContain(
+    "<dt>Meta automática do objetivo</dt><dd>2.404,4 kcal</dd>",
+  );
 });
 
 it("preserva informações pessoais e tabelas e remove marca, estratégia e rodapé solicitados", () => {
