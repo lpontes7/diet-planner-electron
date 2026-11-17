@@ -78,7 +78,10 @@ export function verifyPackagedApp(archive: string): { version: string; scenarios
   const manifest = JSON.parse(extractFile(archive, 'package.json').toString()) as { version: string; main: string; dependencies?: Record<string, string> };
   assert.ok(manifest.dependencies?.['electron-squirrel-startup'], 'electron-squirrel-startup deve permanecer em dependencies');
   assert.equal(manifest.main, '.vite/build/main.cjs');
-  const main = extractFile(archive, manifest.main).toString();
-  const scenarios = verifyMainBundle(main, `${archive}/${manifest.main}`);
+  // @electron/asar walks archive entries using path.sep on the build host.
+  // package.json uses portable forward slashes, which must be normalized on Windows.
+  const mainPath = path.normalize(manifest.main);
+  const main = extractFile(archive, mainPath).toString();
+  const scenarios = verifyMainBundle(main, path.join(archive, mainPath));
   return { version: manifest.version, scenarios };
 }

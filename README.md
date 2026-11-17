@@ -129,7 +129,7 @@ O ZIP fica disponível nos artefatos da execução como `DietasApp-Linux-x64`, p
 
 ## Verificações desta implementação
 
-- TypeScript, build e **27 testes Vitest** passaram, incluindo regressões de dependências do pacote e eventos Squirrel.
+- TypeScript, build e **28 testes Vitest** passaram, incluindo regressões de dependências do pacote, eventos Squirrel e leitura de ASAR com regras de caminhos do Windows.
 - Teste real Electron: cálculos na interface, porções ao vivo, desconhecidos, catálogo personalizado, importação/exportação, PDF, confirmação, reabertura, oito refeições/48 itens e layout de 800 px.
 - PDF A4 gerado e texto extraído: **duas páginas**, incluindo a oitava refeição e seu alimento.
 - Pacotes **Linux x64 e Windows x64** gerados pelo Forge. `app.asar` conferido: somente bundles e manifesto.
